@@ -1,0 +1,25 @@
+
+body {
+  background-color: Black;
+  margin: 30px;
+  color: White;
+  font-family: serif;
+}
+
+button {
+  background-color: Blue;
+  color: White;
+}
+
+a {
+  background-color: White;
+  color: Black;
+  padding: 4px;
+}
+
+h3 {
+  background-color: White;
+  color: rgb(80, 80, 80);
+  padding: 10px;
+  width: 40%;
+}

@@ -1,0 +1,18 @@
+<h1>Contact Manager</h1>
+
+<a href="/add">Add contact</a>
+
+
+<!-- bulleted list for now, can be table later perhaps -->
+<!-- want these to come from a file that's read -->
+<ul>
+  <% @contacts.each do |id, details| %>
+  <li>
+    <a href="/details/<%= id %>">
+      <%= details[:first] %> <%= details[:last] %>
+    </a>
+  </li>
+  <% end %>
+</ul>
+
+<p>Signed in as <%= session[:user] %>. <a href="/signout">Sign Out</a>.

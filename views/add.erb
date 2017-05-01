@@ -1,0 +1,19 @@
+<h2>Add contact</h2>
+
+<form method="post" action="/add">
+  <div>
+    <label for="first">First Name</label>
+    <input type="text" id="first" name="first" value="<%= params[:first] %>">
+    <label for="last">Last Name</label>
+    <input type="text" id="last" name="last" value="<%= params[:last] %>">
+  </div>
+  <div>
+    <label for="email">Email</label>
+    <input type="text" id="email" name="email" value="<%= params[:email] %>">
+  </div>
+  <div>
+    <label for="phone">Phone</label>
+    <input type="text" id="phone" name="phone" value="<%= params[:phone] %>">
+  </div>
+  <button type="submit">Submit</button>
+</form>
