@@ -49,6 +49,20 @@ class ContactTest < Minitest::Test
     assert_includes last_response.body, %q(<h1>Contact Manager</h1>)
   end
 
+  def test_index_without_login_redirect_to_signin
+    get '/'
+
+    assert_equal 302, last_response.status
+    assert_equal 'Please sign in.', session[:message]
+    
+    get last_response['Location']
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, %q(thod="post" action="/signin">)
+    assert_includes last_response.body, 'Please sign in.'
+    assert_nil session[:message]
+  end
+
   def test_add
     get '/add', {}, user_session
 
@@ -204,6 +218,61 @@ class ContactTest < Minitest::Test
     assert_includes last_response.body, %q(<p><a href="/">< back</a></p>)
   end
 
+  def test_edit
+    post '/add', {first: 'funny', last: 'bunny', email: 'email@address.com', phone: '555-555-5555'}, user_session
+    get '/details/1/edit'
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, %q(<form method="post" action="/details/)
+  end
+
+  def test_save_edits
+    post '/add', {first: 'funny', last: 'bunny', email: 'email@address.com', phone: '555-555-5555'}, user_session
+    post '/details/1/edit', {first: 'bugs', last: 'bunny', email: 'email@address.com', phone: '555-555-5555'}
+
+    assert_equal 302, last_response.status
+    assert_equal 'Contact edits saved.', session[:message]
+
+    get '/details/1'
+
+    assert_includes last_response.body, 'Bugs Bunny'
+    refute_includes last_response.body, 'Funny Bunny'
+
+    get '/'
+
+    assert_includes last_response.body, 'Bugs Bunny'
+    refute_includes last_response.body, 'Funny Bunny'
+  end
+
+  def test_invalid_edit
+    post '/add', {first: 'funny', last: 'bunny', email: 'email@address.com', phone: '555-555-5555'}, user_session
+    post '/details/1/edit', {first: 'bu@gs', last: 'bunny', email: 'email@address.com', phone: '555-555-5555'}
+
+    assert_equal 422, last_response.status
+    assert_nil session[:message]
+    assert_includes last_response.body, 'Invalid first name (check for length or invalid characters).', session[:message]
+
+    get '/details/1'
+
+    refute_includes last_response.body, 'Bugs Bunny'
+    assert_includes last_response.body, 'Funny Bunny'
+  end
+
+  def test_delete
+    post '/add', {first: 'funny', last: 'bunny', email: 'email@address.com', phone: '555-555-5555'}, user_session
+    get last_response['Location']
+
+    assert_includes last_response.body, 'Funny Bunny'
+
+    post '/details/1/delete'
+
+    assert_equal 302, last_response.status
+    assert_equal 'Contact deleted.', session[:message]
+    
+    get last_response['Location']
+    refute_includes last_response.body, 'Funny Bunny'
+  end
+
   def test_signin
     get '/signin'
 
@@ -256,9 +325,9 @@ class ContactTest < Minitest::Test
   def test_signout
     get '/signout', {}, user_session
 
+    assert_equal 302, last_response.status
     assert_nil session[:user]
-    assert_nil session[:message]
-    assert_includes last_response.body, 'Successfully logged out.'
+    assert_equal 'Successfully logged out.', session[:message]
   end
 
   def test_signup

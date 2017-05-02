@@ -7,3 +7,7 @@ gem 'sinatra-contrib'
 gem 'erubis'
 gem 'minitest'
 gem 'bcrypt'
+
+group :production do
+  gem 'puma'
+end

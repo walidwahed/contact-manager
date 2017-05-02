@@ -1,5 +1,5 @@
 require 'sinatra'
-require 'sinatra/reloader'
+require 'sinatra/reloader' if development?
 require 'tilt/erubis'
 require 'yaml'
 require 'fileutils'
@@ -10,8 +10,6 @@ configure do
   set :session_secret, 'secret'
   set :erb, escape_html: true
 end
-
-# play around with CSS a little
 
 def credentials_path
   if ENV['RACK_ENV'] == 'test'
@@ -153,7 +151,7 @@ end
 get '/signout' do
   session[:user] = nil
   session[:message] = 'Successfully logged out.'
-  erb :signin
+  redirect '/signin'
 end
 
 get '/signup' do
@@ -173,7 +171,6 @@ post '/signup' do
     erb :signup
   else
     credentials = load_credentials
-    # bcrypt_pass = BCrypt::Password.create(params[:pass])
     credentials[params[:user]] = bcrypt_pass(params[:pass])
     save_credentials(credentials)
     session[:message] = 'Account successfully created.'
@@ -224,11 +221,70 @@ get '/details/:name' do
   require_sign_in
 
   contacts = setup_contacts
-  id = params[:name].to_i
-  @first = contacts[id][:first]
-  @last = contacts[id][:last]
-  @email = contacts[id][:email]
-  @phone = contacts[id][:phone]
+  @id = params[:name].to_i
+  @first = contacts[@id][:first]
+  @last = contacts[@id][:last]
+  @email = contacts[@id][:email]
+  @phone = contacts[@id][:phone]
 
   erb :details
+end
+
+get '/details/:name/edit' do
+  require_sign_in
+
+  contacts = setup_contacts
+  @id = params[:name].to_i
+  @first = contacts[@id][:first]
+  @last = contacts[@id][:last]
+  @email = contacts[@id][:email]
+  @phone = contacts[@id][:phone]
+
+  erb :edit
+end
+
+post '/details/:name/edit' do
+  require_sign_in
+
+  error = contact_error(params)
+
+  @first = params[:first]
+  @last = params[:last]
+  @email = params[:email]
+  @phone = params[:phone]
+  @id = params[:name].to_i
+
+  if error
+    session[:message] = error
+    status 422
+    erb :edit
+  else
+    contacts = setup_contacts
+
+    contacts[@id] = {
+      first: @first.capitalize,
+      last: @last.capitalize,
+      email: @email,
+      phone: @phone
+    }
+
+    save_contacts(contacts)
+
+    session[:message] = 'Contact edits saved.'
+
+    redirect "/details/#{params[:name]}"
+  end
+end
+
+post '/details/:name/delete' do
+  require_sign_in
+  id = params[:name].to_i
+
+  contacts = setup_contacts
+  contacts.delete(id)
+  save_contacts(contacts)
+
+  session[:message] = 'Contact deleted.'
+
+  redirect '/'
 end

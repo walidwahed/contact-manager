@@ -1,0 +1,19 @@
+<h2>Edit contact</h2>
+
+<form method="post" action="/details/<%= @id %>/edit">
+  <div>
+    <label for="first">First Name</label>
+    <input type="text" id="first" name="first" value="<%= @first %>">
+    <label for="last">Last Name</label>
+    <input type="text" id="last" name="last" value="<%= @last %>">
+  </div>
+  <div>
+    <label for="email">Email</label>
+    <input type="text" id="email" name="email" value="<%= @email %>">
+  </div>
+  <div>
+    <label for="phone">Phone</label>
+    <input type="text" id="phone" name="phone" value="<%= @phone %>">
+  </div>
+  <button type="submit">Submit</button>
+</form>

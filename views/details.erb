@@ -4,3 +4,8 @@
   <li><%= @email %></li>
   <li><%= @phone %></li>
 </ul>
+
+<p><a href="/details/<%= @id %>/edit">Edit</a></p>
+<form method="post" action="/details/<%= @id %>/delete">
+  <button type="submit">Delete</button>
+</form>

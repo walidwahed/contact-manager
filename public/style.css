@@ -1,25 +1,61 @@
 
 body {
   background-color: Black;
-  margin: 30px;
+  margin: 50px;
   color: White;
-  font-family: serif;
+  font-family: 'Droid Serif', serif;
 }
 
 button {
+  background-color: Black;
+  color: White;
+  border: solid 1px;
+  padding: 1em;
+  font-family: 'Overpass Mono';
+  font-size: 0.8em;
+}
+
+button:hover {
+  background-color: Blue;
+  padding: 1em;
+}
+
+a {
+  font-family: 'Overpass Mono';
+  background-color: White;
+  color: Black;
+  padding: 5px;
+}
+
+a:hover {
   background-color: Blue;
   color: White;
 }
 
-a {
-  background-color: White;
-  color: Black;
-  padding: 4px;
+li {
+  height: 1.4em;
 }
 
-h3 {
-  background-color: White;
-  color: rgb(80, 80, 80);
-  padding: 10px;
-  width: 40%;
+div {
+  margin: 10px 10px 20px 10px;
+}
+
+input[type=text], input[type=password] {
+  border: 0;
+  padding: 0.5em;
+  margin: 0.5em;
+  font-family: 'Overpass Mono';
+  font-size: 0.8em;
+}
+
+h1 {
+  font-family: 'Overpass Mono';
+  font-size: 1.8em;
+  background-color: Blue;
+  width: 10em;
+  padding: 0.5em 0.6em 0.2em 0.6em;
+}
+
+h2 {
+  font-family: 'Overpass Mono';
 }
